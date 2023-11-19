@@ -1,0 +1,15 @@
+2023-08-21 18:07:01 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "create table [*]user (id bigint not null, bloqueado boolean, email varchar(255), logado boolean, nivel_acesso tinyint check (nivel_acesso between 0 and 3), nome varchar(255), password varchar(255), user varchar(255), primary key (id))"; expected "identifier"; SQL statement:
+create table user (id bigint not null, bloqueado boolean, email varchar(255), logado boolean, nivel_acesso tinyint check (nivel_acesso between 0 and 3), nome varchar(255), password varchar(255), user varchar(255), primary key (id)) [42001-214]
+2023-08-21 18:08:30 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.[*]user from user u1_0"; expected "identifier"; SQL statement:
+select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.user from user u1_0 [42001-214]
+2023-08-21 18:09:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.[*]user from user u1_0"; expected "identifier"; SQL statement:
+select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.user from user u1_0 [42001-214]
+2023-08-21 18:12:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.[*]user from user u1_0"; expected "identifier"; SQL statement:
+select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.user from user u1_0 [42001-214]
+2023-08-21 18:12:05 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.[*]user from user u1_0"; expected "identifier"; SQL statement:
+select u1_0.id,u1_0.bloqueado,u1_0.email,u1_0.logado,u1_0.nivel_acesso,u1_0.nome,u1_0.password,u1_0.user from user u1_0 [42001-214]
