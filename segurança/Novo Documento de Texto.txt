@@ -1,0 +1,7 @@
+pasta pacotes
+
+D:\PROJETOS JAVA\PROJETOS\api_Java_Receitas\Upload\Pacotes
+
+pasta download
+
+D:\PROJETOS JAVA\PROJETOS\api_Java_Receitas\Upload\Download
