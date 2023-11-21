@@ -58,6 +58,8 @@ public class PacoteService {
 
     private static String caminhoImagemzip = "D:\\PROJETOS JAVA\\PROJETOS\\api_Java_Receitas\\Upload\\Download\\";
 
+    private static String caminhoImagembackup = "D:\\PROJETOS JAVA\\PROJETOS\\api_Java_Receitas\\Upload\\Backup\\";
+
     public ResponseEntity<List<Pacote>> listar()
     {
         try{
@@ -149,6 +151,7 @@ public class PacoteService {
             String sourceFile = caminhoImagem + codigo + "\\";
             int dig = (int) (100+ Math.random() * 899);
             FileOutputStream fos = new FileOutputStream(caminhoImagemzip + dig+"_"+nomePacote+".zip");
+            FileOutputStream fos2 = new FileOutputStream(caminhoImagembackup + dig+"_"+nomePacote+".zip");
             pacote.setArquivoDownload( dig+"_"+nomePacote+".zip");
             pacoteRepository.save(pacote);
             ZipOutputStream zipOut = new ZipOutputStream(fos);

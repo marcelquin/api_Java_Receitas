@@ -36,6 +36,8 @@ public class UsuarioService {
 
     private static String caminhoImagem = "D:\\PROJETOS JAVA\\PROJETOS\\api_Java_Receitas\\Upload\\Usuario\\";
 
+    private static String caminhoImagemBackup = "D:\\PROJETOS JAVA\\PROJETOS\\api_Java_Receitas\\Upload\\Backup\\";
+
     public ResponseEntity<List<Usuario>> listar()
     {
         try{
@@ -160,7 +162,10 @@ public class UsuarioService {
 
                     byte[] bytes = file.getBytes();
                     Path caminho = Paths.get(caminhoImagem+dig+"_"+file.getOriginalFilename());
+                    Path caminho2 = Paths.get(caminhoImagemBackup+dig+"_"+file.getOriginalFilename());
                     Files.write(caminho, bytes);
+                    Files.write(caminho2, bytes);
+                    backup.setArquivoDeletado(dig+"_"+file.getOriginalFilename());
                     usuario.setImagem(dig+"_"+file.getOriginalFilename());
                 }
                 backup.setAcao(Acao.USUARIO_EDITADO);
