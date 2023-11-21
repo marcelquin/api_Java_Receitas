@@ -200,6 +200,56 @@ public class PacoteService {
     }
 
 
+    public ResponseEntity<PacoteDTO> AlterarArquivos(Long idpacote, MultipartFile[] files) throws IOException
+    {
+        try{
+            if(pacoteRepository.existsById(idpacote))
+            {
+                Pacote pacote = pacoteRepository.findById(idpacote).get();
+                Usuario usuario = usuarioRepository.findById(pacote.getUsuario().getId()).get();
+                List<String> arquivos = new ArrayList<>();
+                Backup backup = new Backup();
+                if(pacote != null)
+                {
+                    for(MultipartFile file : files)
+                    {
+                        byte[] bytes = file.getBytes();
+                        Path caminho = get(caminhoImagem + pacote.getCodigoDownload()+"\\"+file.getOriginalFilename());
+                        Files.write(caminho, bytes);
+                        arquivos.add(file.getOriginalFilename());
+                    }
+                    pacote.getArquivos().forEach(item ->
+                    {
+                            removeArquivo(caminhoImagem+pacote.getCodigoDownload()+"\\"+item);
+                    });
+                    pacote.setArquivos(arquivos);
+                    pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    pacoteRepository.save(pacote);
+                    backup.setAcao(Acao.PACOTE_EDITADO);
+                    backup.setPacote(pacote);
+                    backup.setUsuario(pacote.getUsuario());
+                    backup.setArquivoDeletado(pacote.getArquivoDownload());
+                    backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    backupRepository.save(backup);
+                    usuarioRepository.save(usuario);
+                    removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
+                    ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
+                    return new ResponseEntity<>(OK);
+                }
+
+            }
+            else
+            {
+                return new ResponseEntity<>(BAD_REQUEST);
+            }
+        }catch (Exception e)
+        {
+            System.out.println("Ops algo deu errado!");
+            e.getStackTrace();
+        }
+        return null;
+    }
+
     public ResponseEntity<PacoteDTO> AdicionarArquivos(Long idpacote, MultipartFile[] files) throws IOException
     {
         try{
@@ -218,16 +268,17 @@ public class PacoteService {
                         Files.write(caminho, bytes);
                         arquivos.add(file.getOriginalFilename());
                     }
-                    arquivos.forEach(item -> pacote.getArquivos().add(item));
+                    pacote.getArquivos().addAll(arquivos); //
                     pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     pacoteRepository.save(pacote);
                     backup.setAcao(Acao.PACOTE_EDITADO);
                     backup.setPacote(pacote);
                     backup.setUsuario(pacote.getUsuario());
+                    backup.setArquivoDeletado(pacote.getArquivoDownload());
                     backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     backupRepository.save(backup);
-                    //usuario.getBackups().add(backup);
                     usuarioRepository.save(usuario);
+                    removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
                     return new ResponseEntity<>(OK);
                 }
@@ -245,6 +296,11 @@ public class PacoteService {
         return null;
     }
 
+    public void removeArquivo (String fileName)
+    {
+        File file = new File(fileName);
+        file.delete();
+    }
 
     public ResponseEntity<PacoteDTO> deletar(Long id)
     {

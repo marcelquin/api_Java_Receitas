@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,8 +66,6 @@ public class UsuarioService {
         }
         return null;
     }
-
-
 
     public ResponseEntity<UsuarioDTO> salvar(UsuarioDTO usuarioDTO, MultipartFile file) throws SQLException, IOException
     {
@@ -154,8 +153,11 @@ public class UsuarioService {
             {
                 Usuario usuario = usuarioRepository.findById(id).get();
                 Backup backup = new Backup();
+                String filename = caminhoImagem+usuario.getImagem();
+                removeArquivo(filename);//
                 int dig = (int) (101 + Math.random() * 899);
-                {
+                if(!file.isEmpty()){
+
                     byte[] bytes = file.getBytes();
                     Path caminho = Paths.get(caminhoImagem+dig+"_"+file.getOriginalFilename());
                     Files.write(caminho, bytes);
@@ -179,6 +181,13 @@ public class UsuarioService {
             e.getStackTrace();
         }
         return null;
+    }
+
+    public void removeArquivo (String fileName)
+    {
+        File file = new File(fileName);
+        file.delete();
+        System.out.println("deletou");
     }
 
     public ResponseEntity<UsuarioDTO> deletar(Long id)

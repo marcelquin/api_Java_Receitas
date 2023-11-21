@@ -84,6 +84,17 @@ public class PacoteController {
     public ResponseEntity<PacoteDTO> AdicionarArquivos(@RequestParam Long idpacote,@RequestPart MultipartFile[] files) throws IOException
     {return pacoteService.AdicionarArquivos(idpacote, files);}
 
+    @Operation(summary = "Altera Registro", method = "PUT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registro editado com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+    @PutMapping(value = "/AlterarArquivos", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<PacoteDTO> AlterarArquivos(@RequestParam Long idpacote, @RequestPart MultipartFile[] files) throws IOException
+    { return pacoteService.AlterarArquivos(idpacote, files);}
+
     @Operation(summary = "Deleta Registro por id", method = "DELETE")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Registro deletado com sucesso"),

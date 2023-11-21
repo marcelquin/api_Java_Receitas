@@ -37,6 +37,8 @@ public class Backup {
     @JoinColumn(name = "backup_pacote_id")
     private Pacote pacote;
 
+    private String arquivoDeletado;
+
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataAcao;
 

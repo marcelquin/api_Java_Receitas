@@ -1,0 +1,15 @@
+roteador 120222
+NET_C1D7E6
+0C8063C1D7E6
+
+redes:
+
+QuinteiroHome
+mhq@ 2809
+QuinteiroHome 5G
+mhq@ 2809
+QuinteiroVz
+mhme2809
+
+
+ 
