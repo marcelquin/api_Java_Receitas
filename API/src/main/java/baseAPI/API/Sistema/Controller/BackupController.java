@@ -46,4 +46,15 @@ public class BackupController {
     @GetMapping("/buscarBackupPorId")
     public ResponseEntity<Backup> buscarBackupPorId(@RequestParam Long id)
     {return backupService.buscarPorId(id);}
+
+/*    @Operation(summary = "Busca Registro e realiza download por id", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+    @GetMapping("/downloadArquivoDeletado")
+    public ResponseEntity<Resource> downloadArquivoDeletado(@RequestParam Long idbackup) throws IOException
+    { return backupService.downloadFiles(idbackup);}*/
 }

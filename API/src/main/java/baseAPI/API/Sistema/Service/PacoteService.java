@@ -2,9 +2,11 @@ package baseAPI.API.Sistema.Service;
 
 import baseAPI.API.Sistema.DTO.PacoteDTO;
 import baseAPI.API.Sistema.Enum.Acao;
+import baseAPI.API.Sistema.Model.Arquivos;
 import baseAPI.API.Sistema.Model.Backup;
 import baseAPI.API.Sistema.Model.Pacote;
 import baseAPI.API.Sistema.Model.Usuario;
+import baseAPI.API.Sistema.Repository.ArquivosRepository;
 import baseAPI.API.Sistema.Repository.BackupRepository;
 import baseAPI.API.Sistema.Repository.PacoteRepository;
 import baseAPI.API.Sistema.Repository.UsuarioRepository;
@@ -18,23 +20,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 
-import static baseAPI.API.Sistema.Service.UtilService.zipFile;
 import static java.nio.file.Paths.get;
 
 import static org.apache.tomcat.util.http.fileupload.FileUploadBase.CONTENT_DISPOSITION;
@@ -52,6 +47,9 @@ public class PacoteService {
 
     @Autowired
     BackupRepository backupRepository;
+
+    @Autowired
+    ArquivosRepository arquivosRepository;
 
     static final int TAMANHO_BUFFER = 4096; // 4kb
     private static String caminhoImagem = "D:\\PROJETOS JAVA\\PROJETOS\\api_Java_Receitas\\Upload\\Pacotes\\";
@@ -100,7 +98,8 @@ public class PacoteService {
                 if(pacoteDTO != null)
                 {
                     Pacote pacote = new Pacote();
-                    List<String> arquivos = new ArrayList<>();
+                    Arquivos arquivos = new Arquivos();
+                    List<String> lista = new ArrayList<>();
                     pacote.setNome(pacoteDTO.getNome());
                     pacote.setDescrisao(pacoteDTO.getDescrisao());
                     int dig = (int) (101 + Math.random() * 899);
@@ -112,12 +111,13 @@ public class PacoteService {
                         byte[] bytes = file.getBytes();
                         Path caminho = get(caminhoImagem + codigo+"\\"+file.getOriginalFilename());
                         Files.write(caminho, bytes);
-                        arquivos.add(file.getOriginalFilename());
+                        lista.add(file.getOriginalFilename());
                     }
+                    arquivos.setArquivos(lista);
+                    arquivosRepository.save(arquivos);
                     pacote.setArquivos(arquivos);
                     pacote.setArquivoDownload(codigo+"_"+pacoteDTO.getNome()+".zip");
                     pacote.setDataCriacao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
-                    pacote.setUsuario(usuario);
                     pacoteRepository.save(pacote);
                     usuario.getPacotes().add(pacote);
                     Backup backup = new Backup();
@@ -126,7 +126,6 @@ public class PacoteService {
                     backup.setPacote(pacote);
                     backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     backupRepository.save(backup);
-                   // usuario.getBackups().add(backup);
                     usuarioRepository.save(usuario);
                     ziparArquivos(pacoteDTO.getNome(),codigo);
                     return new ResponseEntity<>(CREATED);
@@ -151,13 +150,36 @@ public class PacoteService {
             String sourceFile = caminhoImagem + codigo + "\\";
             int dig = (int) (100+ Math.random() * 899);
             FileOutputStream fos = new FileOutputStream(caminhoImagemzip + dig+"_"+nomePacote+".zip");
-            FileOutputStream fos2 = new FileOutputStream(caminhoImagembackup + dig+"_"+nomePacote+".zip");
             pacote.setArquivoDownload( dig+"_"+nomePacote+".zip");
             pacoteRepository.save(pacote);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
             File fileToZip = new File(sourceFile);
             String fileName = fileToZip.getName();
-            zipFile(fileToZip, fileToZip.getName(), zipOut);
+            UtilService.zipFile(fileToZip, fileToZip.getName(), zipOut);
+            zipOut.close();
+            fos.close();
+            return new ResponseEntity<>(OK);
+        }catch (Exception e)
+        {
+            System.out.println("Ops algo deu errado!");
+            e.getMessage();
+        }
+        return null;
+    }
+
+    public ResponseEntity<PacoteDTO> ziparArquivosBackup(String nomePacote,String codigo)throws IOException
+    {
+        try {
+            Pacote pacote = pacoteRepository.findBycodigoDownload(codigo);
+            String sourceFile = caminhoImagem + codigo + "\\";
+            int dig = (int) (100+ Math.random() * 899);
+            FileOutputStream fos = new FileOutputStream(caminhoImagembackup + dig+"_"+nomePacote+".zip");
+            pacote.setArquivoDownload( dig+"_"+nomePacote+".zip");
+            pacoteRepository.save(pacote);
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
+            File fileToZip = new File(sourceFile);
+            String fileName = fileToZip.getName();
+            UtilService.zipFile(fileToZip, fileToZip.getName(), zipOut);
             zipOut.close();
             fos.close();
             return new ResponseEntity<>(OK);
@@ -185,7 +207,6 @@ public class PacoteService {
                    }
                    Backup backup = new Backup();
                    backup.setAcao(Acao.PACOTE_DOWNLOAD);
-                   backup.setUsuario(pacote.getUsuario());
                    backup.setPacote(pacote);
                    backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                    backupRepository.save(backup);
@@ -209,32 +230,34 @@ public class PacoteService {
             if(pacoteRepository.existsById(idpacote))
             {
                 Pacote pacote = pacoteRepository.findById(idpacote).get();
-                Usuario usuario = usuarioRepository.findById(pacote.getUsuario().getId()).get();
-                List<String> arquivos = new ArrayList<>();
-                Backup backup = new Backup();
                 if(pacote != null)
                 {
+                Arquivos arquivos = arquivosRepository.findById(pacote.getArquivos().getId()).get();
+                List<String> lista = new ArrayList<>();
+                Backup backup = new Backup();
+
                     for(MultipartFile file : files)
                     {
                         byte[] bytes = file.getBytes();
                         Path caminho = get(caminhoImagem + pacote.getCodigoDownload()+"\\"+file.getOriginalFilename());
                         Files.write(caminho, bytes);
-                        arquivos.add(file.getOriginalFilename());
+                        lista.add(file.getOriginalFilename());
                     }
-                    pacote.getArquivos().forEach(item ->
+
+                    pacote.getArquivos().getArquivos().forEach(item ->
                     {
-                            removeArquivo(caminhoImagem+pacote.getCodigoDownload()+"\\"+item);
+                        removeArquivo(caminhoImagem+pacote.getCodigoDownload()+"\\"+item);
+                        System.out.println("REMOVER AQUI");
                     });
-                    pacote.setArquivos(arquivos);
+                    arquivos.setArquivos(lista);
+                    arquivosRepository.save(arquivos);
                     pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     pacoteRepository.save(pacote);
                     backup.setAcao(Acao.PACOTE_EDITADO);
                     backup.setPacote(pacote);
-                    backup.setUsuario(pacote.getUsuario());
                     backup.setArquivoDeletado(pacote.getArquivoDownload());
                     backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     backupRepository.save(backup);
-                    usuarioRepository.save(usuario);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
                     return new ResponseEntity<>(OK);
@@ -259,28 +282,28 @@ public class PacoteService {
             if(pacoteRepository.existsById(idpacote))
             {
                 Pacote pacote = pacoteRepository.findById(idpacote).get();
-                Usuario usuario = usuarioRepository.findById(pacote.getUsuario().getId()).get();
-                List<String> arquivos = new ArrayList<>();
-                Backup backup = new Backup();
                 if(pacote != null)
                 {
+                Arquivos arquivos = arquivosRepository.findById(pacote.getArquivos().getId()).get();
+                List<String> lista = new ArrayList<>();
+                Backup backup = new Backup();
+
                     for(MultipartFile file : files)
                     {
                         byte[] bytes = file.getBytes();
                         Path caminho = get(caminhoImagem + pacote.getCodigoDownload()+"\\"+file.getOriginalFilename());
                         Files.write(caminho, bytes);
-                        arquivos.add(file.getOriginalFilename());
+                        lista.add(file.getOriginalFilename());
                     }
-                    pacote.getArquivos().addAll(arquivos); //
+                    arquivos.getArquivos().addAll(lista);
+                    arquivosRepository.save(arquivos);
                     pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     pacoteRepository.save(pacote);
                     backup.setAcao(Acao.PACOTE_EDITADO);
                     backup.setPacote(pacote);
-                    backup.setUsuario(pacote.getUsuario());
                     backup.setArquivoDeletado(pacote.getArquivoDownload());
                     backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                     backupRepository.save(backup);
-                    usuarioRepository.save(usuario);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
                     return new ResponseEntity<>(OK);
@@ -313,7 +336,6 @@ public class PacoteService {
                 Pacote pacote = pacoteRepository.findById(id).get();
                 Backup backup = new Backup();
                 backup.setAcao(Acao.PACOTE_EXCLUIDO);
-                backup.setUsuario(pacote.getUsuario());
                 backup.setPacote(pacote);
                 backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
                 backupRepository.save(backup);

@@ -25,17 +25,13 @@ public class Backup {
     @Enumerated
     private Acao acao;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "backup_usuario_id")
-    private Usuario usuario;
+    private Usuario usuario; //
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "backup_comentario_id")
-    private Comentario comentario;
-
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "backup_pacote_id")
-    private Pacote pacote;
+    private Pacote pacote; //
 
     private String arquivoDeletado;
 

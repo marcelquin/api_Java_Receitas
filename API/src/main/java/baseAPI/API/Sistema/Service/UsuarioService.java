@@ -94,9 +94,7 @@ public class UsuarioService {
                 backup.setAcao(Acao.USUARIO_CRIADO);
                 backup.setUsuario(usuario);
                 backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
-                System.out.println("..");
                 //usuario.getBackups().add(backup);
-                System.out.println("..");
                 usuarioRepository.save(usuario);
                 backupRepository.save(backup);
                 return new ResponseEntity<>(CREATED);
@@ -192,7 +190,6 @@ public class UsuarioService {
     {
         File file = new File(fileName);
         file.delete();
-        System.out.println("deletou");
     }
 
     public ResponseEntity<UsuarioDTO> deletar(Long id)

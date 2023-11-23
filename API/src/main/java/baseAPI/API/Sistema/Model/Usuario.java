@@ -39,11 +39,9 @@ public class Usuario {
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate dataNascimento;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany
     private List<Pacote> pacotes;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Comentario> comentarios;
 
 
 }

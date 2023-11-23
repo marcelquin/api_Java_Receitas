@@ -22,15 +22,12 @@ public class Pacote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "pacote_usuario_id")
-    private Usuario usuario;
-
     private String nome;
 
     private String descrisao;
 
-    private List<String> arquivos;
+    @OneToOne
+    private Arquivos arquivos;
 
     private String arquivoDownload;
 
@@ -42,7 +39,5 @@ public class Pacote {
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataEdicao;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Comentario> comentarios;
 
 }
