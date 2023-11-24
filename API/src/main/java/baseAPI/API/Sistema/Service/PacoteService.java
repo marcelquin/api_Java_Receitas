@@ -173,10 +173,7 @@ public class PacoteService {
         try {
             Pacote pacote = pacoteRepository.findById(id).get();
             String sourceFile = caminhoImagem + pacote.getCodigoDownload() + "\\";
-            int dig = (int) (100+ Math.random() * 899);
-            FileOutputStream fos = new FileOutputStream(caminhoImagembackup + dig+"_"+pacote.getNome()+".zip");
-            pacote.setArquivoDownload( dig+"_"+pacote.getNome()+".zip");
-            pacoteRepository.save(pacote);
+            FileOutputStream fos = new FileOutputStream(caminhoImagembackup +pacote.getArquivoDownload()+".zip");
             ZipOutputStream zipOut = new ZipOutputStream(fos);
             File fileToZip = new File(sourceFile);
             String fileName = fileToZip.getName();

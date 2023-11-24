@@ -35,6 +35,8 @@ public class Backup {
 
     private String arquivoDeletado;
 
+    private String arquivoBackup;
+
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime dataAcao;
 
