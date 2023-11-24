@@ -1,0 +1,31 @@
+	
+	service entidade
+
+   static final int TAMANHO_BUFFER = 4096; // 4kb
+   
+       public ResponseEntity<entidadeDTO> ziparArquivos(String arqivo)throws IOException
+    {
+        try {
+            Pacote pacote = pacoteRepository.findBycodigoDownload(codigo);
+            String sourceFile = caminhoImagem + codigo + "\\";
+            int dig = (int) (100+ Math.random() * 899);
+            FileOutputStream fos = new FileOutputStream(caminhoImagemzip + dig+"_"+nomePacote+".zip");
+            pacote.setArquivoDownload( dig+"_"+nomePacote+".zip");
+            pacoteRepository.save(pacote);
+            ZipOutputStream zipOut = new ZipOutputStream(fos);
+            File fileToZip = new File(sourceFile);
+            String fileName = fileToZip.getName();
+            zipFile(fileToZip, fileToZip.getName(), zipOut);
+            zipOut.close();
+            fos.close();
+            return new ResponseEntity<>(OK);
+        }catch (Exception e)
+        {
+            System.out.println("Ops algo deu errado!");
+            e.getMessage();
+        }
+        return null;
+    }
+	
+	metodos
+	ziparArquivos(pacoteDTO.getNome(),codigo);

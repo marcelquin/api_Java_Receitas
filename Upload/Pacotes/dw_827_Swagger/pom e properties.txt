@@ -1,0 +1,32 @@
+		
+		pom.xml
+		
+		<!-- sweeger -->
+		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger-ui -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>2.2.9</version>
+		</dependency>
+		<!--permite visualizar documentação-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.0.3</version>
+		</dependency>
+		
+--------------------------------------------------------------
+properties
+
+springdoc.swagger-ui.tryItOutEnabled=true
+springdoc.swagger-ui.filter=true
+springdoc.swagger-ui.path=/api-documentation
+springdoc.api-docs.path=/api-api-docs		
+
+------------------------------------------------------
+http://localhost:8080/swagger-ui/index.html  link padrão

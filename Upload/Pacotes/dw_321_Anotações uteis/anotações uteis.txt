@@ -1,0 +1,72 @@
+ESTRUTURA PARA METODOS SERVICE
+
+public ResponseEntity<entidade> nomeMetodo(Atributo atributo)
+	{
+		try{
+		
+			if()
+			{
+				return new ResponseEntity<>(CREATED);
+			}
+			else 
+			{
+               return new ResponseEntity<>(BAD_REQUEST);
+            }
+        }catch (Exception e)
+        {
+            System.out.println("Ops algo deu errado!");
+            e.getStackTrace();
+        }
+        return null;
+	}
+-------------------------------------------------------------------	
+	
+LocalDate e LocalDateTime
+
+data futura = @Future
+formata json = @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+pega hora atual = LocalDate.now();
+diminui horas da data atual = (LocalDateTime.now().minus(4, ChronoUnit.HOURS));
+
+-------------------------------------------------------------------	
+
+busca personalizada repository
+
+public entidade findBycampo(String chave);
+
+campo nome identico ao escrito na entidade
+
+-------------------------------------------------------------------	
+
+formata Double
+
+DecimalFormat df= new DecimalFormat("#,####.##");
+System.out.println(df.format(valorParcela)); -- exibe formatado mas não salva formatado
+
+-------------------------------------------------------------------	
+
+gerador numero aleatoreo
+
+            
+            int codigoL = (int) (10000001 + Math.random() * 89999999);
+			
+-------------------------------------------------------------------	
+APAGA ARQUIVO
+
+fileName = "caminho_da_imagem"+nome_Arquivo
+
+public void removeArquivo (String fileName) 
+{
+    File file = new File(fileName);
+    file.delete();
+}
+
+-------------------------------------------------------------------	
+
+public void removeArquivo (String fileName) 
+{
+    File file = new File(fileName);
+    file.delete();
+}
+
+--------------------------------------------------------------------

@@ -1,0 +1,51 @@
+    @OpenAPIDefinition(info = @Info(title = "Nome projeto", version = "1", description = "Descrisão projeto"))
+	acima do aplication juntamente com o @SpringBootApplication
+	
+	@Tag(name = "/api/entidade", description = "descrisão prévia do objetivo da classe")
+acima do public class entidadeController
+	
+	@Operation(summary = "Busca Registros da tabela", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+	
+	
+	    @Operation(summary = "Busca Registro por id", method = "GET")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+
+	
+	    @Operation(summary = "Salva novo Registro", method = "POST")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registro salvo com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+	@PostMapping() (value = "/nome", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+													quando MultipartFile
+													
+	    @Operation(summary = "Altera Registro", method = "PUT")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registro editado com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+
+	
+	    @Operation(summary = "Deleta Registro por id", method = "DELETE")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Registro deletado com sucesso"),
+            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
+            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
+            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
+    })
+	
