@@ -8,12 +8,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -36,25 +38,6 @@ public class BackupController {
     public ResponseEntity<List<Backup>> listar()
     {return backupService.listar();}
 
-    @Operation(summary = "Busca Registro por id", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
-            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
-            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
-    })
-    @GetMapping("/buscarBackupPorId")
-    public ResponseEntity<Backup> buscarBackupPorId(@RequestParam Long id)
-    {return backupService.buscarPorId(id);}
 
-/*    @Operation(summary = "Busca Registro e realiza download por id", method = "GET")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-            @ApiResponse(responseCode = "422", description = "Dados de requisição inválida"),
-            @ApiResponse(responseCode = "400", description = "Parametros inválidos"),
-            @ApiResponse(responseCode = "500", description = "Ops algo errado"),
-    })
-    @GetMapping("/downloadArquivoDeletado")
-    public ResponseEntity<Resource> downloadArquivoDeletado(@RequestParam Long idbackup) throws IOException
-    { return backupService.downloadFiles(idbackup);}*/
+
 }

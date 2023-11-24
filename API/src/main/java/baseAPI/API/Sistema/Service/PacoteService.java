@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -167,14 +168,14 @@ public class PacoteService {
         return null;
     }
 
-    public ResponseEntity<PacoteDTO> ziparArquivosBackup(String nomePacote,String codigo)throws IOException
+    public ResponseEntity<PacoteDTO> ziparArquivosBk(Long id)throws IOException
     {
         try {
-            Pacote pacote = pacoteRepository.findBycodigoDownload(codigo);
-            String sourceFile = caminhoImagem + codigo + "\\";
+            Pacote pacote = pacoteRepository.findById(id).get();
+            String sourceFile = caminhoImagem + pacote.getCodigoDownload() + "\\";
             int dig = (int) (100+ Math.random() * 899);
-            FileOutputStream fos = new FileOutputStream(caminhoImagembackup + dig+"_"+nomePacote+".zip");
-            pacote.setArquivoDownload( dig+"_"+nomePacote+".zip");
+            FileOutputStream fos = new FileOutputStream(caminhoImagembackup + dig+"_"+pacote.getNome()+".zip");
+            pacote.setArquivoDownload( dig+"_"+pacote.getNome()+".zip");
             pacoteRepository.save(pacote);
             ZipOutputStream zipOut = new ZipOutputStream(fos);
             File fileToZip = new File(sourceFile);
@@ -222,8 +223,6 @@ public class PacoteService {
         }
         return new ResponseEntity<>(BAD_REQUEST);
     }
-
-
     public ResponseEntity<PacoteDTO> AlterarArquivos(Long idpacote, MultipartFile[] files) throws IOException
     {
         try{
@@ -247,7 +246,6 @@ public class PacoteService {
                     pacote.getArquivos().getArquivos().forEach(item ->
                     {
                         removeArquivo(caminhoImagem+pacote.getCodigoDownload()+"\\"+item);
-                        System.out.println("REMOVER AQUI");
                     });
                     arquivos.setArquivos(lista);
                     arquivosRepository.save(arquivos);
@@ -260,6 +258,7 @@ public class PacoteService {
                     backupRepository.save(backup);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
+                    ziparArquivosBk(idpacote);
                     return new ResponseEntity<>(OK);
                 }
 
@@ -306,6 +305,7 @@ public class PacoteService {
                     backupRepository.save(backup);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
+                    ziparArquivosBk(idpacote);
                     return new ResponseEntity<>(OK);
                 }
 
