@@ -22,16 +22,12 @@ public class Backup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Acao acao;
 
-    @ManyToOne()
-    @JoinColumn(name = "backup_usuario_id")
-    private Usuario usuario; //
-
-    @ManyToOne()
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "backup_pacote_id")
-    private Pacote pacote; //
+    private Pacote pacote;
 
     private String arquivoDeletado;
 

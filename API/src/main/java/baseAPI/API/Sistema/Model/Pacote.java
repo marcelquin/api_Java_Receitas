@@ -26,7 +26,7 @@ public class Pacote {
 
     private String descrisao;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Arquivos arquivos;
 
     private String arquivoDownload;

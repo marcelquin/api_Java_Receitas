@@ -69,8 +69,8 @@ public class PacoteController {
             @ApiResponse(responseCode = "500", description = "Ops algo errado"),
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<PacoteDTO> novoPacote(@RequestParam Long idUsuario, PacoteDTO pacoteDTO,@RequestPart MultipartFile[] files) throws IOException
-    {return pacoteService.salvar(idUsuario, pacoteDTO, files);}
+    public ResponseEntity<PacoteDTO> novoPacote(PacoteDTO pacoteDTO,@RequestPart MultipartFile[] files) throws IOException
+    {return pacoteService.salvar(pacoteDTO, files);}
 
 
     @Operation(summary = "Altera Registro", method = "PUT")

@@ -5,11 +5,9 @@ import baseAPI.API.Sistema.Enum.Acao;
 import baseAPI.API.Sistema.Model.Arquivos;
 import baseAPI.API.Sistema.Model.Backup;
 import baseAPI.API.Sistema.Model.Pacote;
-import baseAPI.API.Sistema.Model.Usuario;
 import baseAPI.API.Sistema.Repository.ArquivosRepository;
 import baseAPI.API.Sistema.Repository.BackupRepository;
 import baseAPI.API.Sistema.Repository.PacoteRepository;
-import baseAPI.API.Sistema.Repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -22,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -42,9 +38,6 @@ public class PacoteService {
 
     @Autowired
     PacoteRepository pacoteRepository;
-
-    @Autowired
-    UsuarioRepository usuarioRepository;
 
     @Autowired
     BackupRepository backupRepository;
@@ -79,7 +72,7 @@ public class PacoteService {
                 Optional<Pacote> entidade = pacoteRepository.findById(id);
                 return new ResponseEntity<Pacote>(entidade.get(), ACCEPTED);
             }else {
-                ResponseEntity responseEntity = new ResponseEntity<Usuario>(BAD_GATEWAY);
+                ResponseEntity responseEntity = new ResponseEntity<Pacote>(BAD_GATEWAY);
                 return responseEntity;
             }
         }catch (Exception e)
@@ -90,13 +83,10 @@ public class PacoteService {
         return null;
     }
 
-    public ResponseEntity<PacoteDTO> salvar(Long idUsuario, PacoteDTO pacoteDTO, MultipartFile[] files)
+    public ResponseEntity<PacoteDTO> salvar(PacoteDTO pacoteDTO, MultipartFile[] files)throws IOException
     {
         try{
-            if(idUsuario != null)
-            {
-                Usuario usuario = usuarioRepository.findById(idUsuario).get();
-                if(pacoteDTO != null)
+            if(pacoteDTO != null)
                 {
                     Pacote pacote = new Pacote();
                     Arquivos arquivos = new Arquivos();
@@ -118,20 +108,16 @@ public class PacoteService {
                     arquivosRepository.save(arquivos);
                     pacote.setArquivos(arquivos);
                     pacote.setArquivoDownload(codigo+"_"+pacoteDTO.getNome()+".zip");
-                    pacote.setDataCriacao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    pacote.setDataCriacao(LocalDateTime.now());
                     pacoteRepository.save(pacote);
-                    usuario.getPacotes().add(pacote);
                     Backup backup = new Backup();
                     backup.setAcao(Acao.PACOTE_CRIADO);
-                    backup.setUsuario(usuario);
                     backup.setPacote(pacote);
-                    backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    backup.setDataAcao(LocalDateTime.now());
                     backupRepository.save(backup);
-                    usuarioRepository.save(usuario);
                     ziparArquivos(pacoteDTO.getNome(),codigo);
                     return new ResponseEntity<>(CREATED);
                 }
-            }
             else
             {
                 return new ResponseEntity<>(BAD_REQUEST);
@@ -206,7 +192,7 @@ public class PacoteService {
                    Backup backup = new Backup();
                    backup.setAcao(Acao.PACOTE_DOWNLOAD);
                    backup.setPacote(pacote);
-                   backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                   backup.setDataAcao(LocalDateTime.now());
                    backupRepository.save(backup);
                    Resource resource = new UrlResource(filePath.toUri());
                    HttpHeaders httpHeaders = new HttpHeaders();
@@ -246,12 +232,12 @@ public class PacoteService {
                     });
                     arquivos.setArquivos(lista);
                     arquivosRepository.save(arquivos);
-                    pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    pacote.setDataEdicao(LocalDateTime.now());
                     pacoteRepository.save(pacote);
                     backup.setAcao(Acao.PACOTE_EDITADO);
                     backup.setPacote(pacote);
                     backup.setArquivoDeletado(pacote.getArquivoDownload());
-                    backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    backup.setDataAcao(LocalDateTime.now());
                     backupRepository.save(backup);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
@@ -293,12 +279,12 @@ public class PacoteService {
                     }
                     arquivos.getArquivos().addAll(lista);
                     arquivosRepository.save(arquivos);
-                    pacote.setDataEdicao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    pacote.setDataEdicao(LocalDateTime.now());
                     pacoteRepository.save(pacote);
                     backup.setAcao(Acao.PACOTE_EDITADO);
                     backup.setPacote(pacote);
                     backup.setArquivoDeletado(pacote.getArquivoDownload());
-                    backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
+                    backup.setDataAcao(LocalDateTime.now());
                     backupRepository.save(backup);
                     removeArquivo(caminhoImagemzip+pacote.getArquivoDownload());
                     ziparArquivos(pacote.getNome(), pacote.getCodigoDownload());
@@ -331,11 +317,6 @@ public class PacoteService {
             if(pacoteRepository.existsById(id))
             {
                 Pacote pacote = pacoteRepository.findById(id).get();
-                Backup backup = new Backup();
-                backup.setAcao(Acao.PACOTE_EXCLUIDO);
-                backup.setPacote(pacote);
-                backup.setDataAcao(LocalDateTime.now().minus(4,ChronoUnit.HOURS));
-                backupRepository.save(backup);
                 pacoteRepository.deleteById(id);
                 ResponseEntity<PacoteDTO> tResponseEntity = new ResponseEntity<>(OK);
                 return tResponseEntity;
